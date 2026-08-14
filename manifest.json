@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "PR Confidence Label",
+  "version": "1.0.0",
+  "description": "Sinaliza automaticamente o nível de confiança de auto-merge (🟢/🟡/🔴) no título dos seus PRs no GitHub.",
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*/*/pull/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
