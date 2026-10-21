@@ -26,7 +26,10 @@
   }
 
   function getTitleElement() {
-    return document.querySelector('[data-component="PH_Title"] span[data-component="Text"]');
+    return (
+      document.querySelector('[data-component="TitleArea"] h1 .markdown-title') ||
+      document.querySelector('[data-component="PH_Title"] span[data-component="Text"]')
+    );
   }
 
   function hasConfidenceEmoji(text) {
@@ -118,7 +121,8 @@
 
     const titleEl = getTitleElement();
     const heading = titleEl?.closest('h1');
-    heading?.insertAdjacentElement('afterend', widget);
+    // The h1 is now inline next to the edit button; append below both so the PageHeader grid stays intact.
+    heading?.parentElement?.appendChild(widget);
   }
 
   function evaluatePage() {
