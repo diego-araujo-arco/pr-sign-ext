@@ -73,7 +73,7 @@
       const label = await waitFor(
         () =>
           Array.from(document.querySelectorAll('label')).find(
-            (el) => el.textContent.trim() === 'Edit Pull Request Title'
+            (el) => el.textContent.trim().toLowerCase() === 'edit pull request title'
           ),
         EDIT_TIMEOUT_MS
       );
@@ -85,7 +85,7 @@
       const saveButton = await waitFor(() => {
         const scope = input.closest('form')?.parentElement || document;
         return Array.from(scope.querySelectorAll('button')).find((b) =>
-          b.textContent.trim().startsWith('Save')
+          /^Save\b(?!d)/.test(b.textContent.trim())
         );
       }, EDIT_TIMEOUT_MS);
       saveButton.click();
