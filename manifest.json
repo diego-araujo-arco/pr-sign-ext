@@ -5,7 +5,7 @@
   "description": "Sinaliza automaticamente o nível de confiança de auto-merge (🟢/🟡/🔴) no título dos seus PRs no GitHub.",
   "content_scripts": [
     {
-      "matches": ["https://github.com/*/*/pull/*"],
+      "matches": ["https://github.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }

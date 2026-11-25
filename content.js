@@ -6,13 +6,14 @@
   ];
   const CONFIDENCE_EMOJIS = LEVELS.map((l) => l.emoji);
   const WIDGET_ID = 'pr-confidence-label-widget';
+  const PR_HEADER_SELECTOR = '[data-telemetry-action="pull_requests.header.region"]';
   const EDIT_TIMEOUT_MS = 4000;
   const POLL_INTERVAL_MS = 100;
 
   let lastUrl = '';
 
   function isPRPage() {
-    return /^\/[^/]+\/[^/]+\/pull\/\d+/.test(location.pathname);
+    return /^\/[^/]+\/[^/]+\/pull\/\d+(?:\/|$)/.test(location.pathname);
   }
 
   function getLoggedInUser() {
@@ -20,15 +21,20 @@
   }
 
   function getPRAuthor() {
-    const link = document.querySelector('a.author, a[data-hovercard-type="user"]');
-    const href = link?.getAttribute('href');
-    return href ? href.replace(/^\//, '') : null;
+    const link =
+      document.querySelector(`${PR_HEADER_SELECTOR} [class*="summaryContainer__"] a[data-inline="true"]`) ||
+      document.querySelector('.gh-header-meta a.author');
+    if (link?.origin !== location.origin) return null;
+
+    return link.pathname.match(/^\/([^/]+)\/?$/)?.[1] ?? null;
   }
 
   function getTitleElement() {
     return (
+      document.querySelector(`${PR_HEADER_SELECTOR} [data-component="TitleArea"] h1 span[data-component="Text"]`) ||
       document.querySelector('[data-component="TitleArea"] h1 .markdown-title') ||
-      document.querySelector('[data-component="PH_Title"] span[data-component="Text"]')
+      document.querySelector('h1[data-component="PH_Title"] span[data-component="Text"]') ||
+      document.querySelector('h1.gh-header-title .js-issue-title')
     );
   }
 
@@ -159,10 +165,11 @@
       evaluatePage();
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
 
   document.addEventListener('turbo:load', evaluatePage);
   document.addEventListener('turbo:render', evaluatePage);
+  window.addEventListener('popstate', onUrlChange);
 
   lastUrl = location.href;
   evaluatePage();
